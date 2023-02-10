@@ -8,42 +8,15 @@ from multiprocessing import cpu_count
 import gzip
 from glob import glob
 import shutil
+import pandas as pd
+from kits import Kits
 
 
 # mamba create -n nanopore -y -c bioconda \
-# flye samtools parallel bbmap shasta porechop filtlong bandage minimap2 blast psutil
+# flye samtools parallel bbmap shasta porechop filtlong bandage minimap2 blast psutil pandas pycoqc pysam
 
 
 class Methods(object):
-    barcoding_kit_list = ['EXP-NBD104', '', 'EXP-NBA114', 'SQK-RBK114.96', 'SQK-RBK114.24', 'SQK-NBD114.96',
-                      'SQK-NBD114.24', 'SQK-PCB111.24', 'SQK-RPB004', 'SQK-PBK004', 'SQK-RBK110.96',
-                      'SQK-RBK004', 'SQK-16S024', 'SQK-RAB204', 'EXP-PBC096', 'EXP-PBC001', 'EXP-NBD114',
-                      'EXP-NBD104', 'EXP-NBD196', 'unknown']
-
-    library_kit_list = ['SQK-16S024', 'SQK-CS9109', 'SQK-DCS108', 'SQK-DCS109', 'SQK-LRK001', 'SQK-LSK108',
-                        'SQK-LSK109', 'SQK-LSK109-XL', 'SQK-LSK110', 'SQK-LSK110-XL', 'SQK-LSK111', 'SQK-LSK111-XL',
-                        'SQK-LSK112', 'SQK-LSK112-XL', 'SQK-LSK114', 'SQK-LSK114-XL', 'SQK-LSK308', 'SQK-LSK309',
-                        'SQK-LSK319', 'SQK-LWB001', 'SQK-LWP001', 'SQK-MLK111-96-XL', 'SQK-NBD111-24', 'SQK-NBD111-96',
-                        'SQK-NBD112-24', 'SQK-NBD112-96', 'SQK-NBD114-24', 'SQK-NBD114-96', 'SQK-PBK004', 'SQK-PCB109',
-                        'SQK-PCB110', 'SQK-PCB111-24', 'SQK-PCS108', 'SQK-PCS109', 'SQK-PCS111', 'SQK-PSK004',
-                        'SQK-RAB201', 'SQK-RAB204', 'SQK-RAD002', 'SQK-RAD003', 'SQK-RAD004', 'SQK-RAD112',
-                        'SQK-RAD114', 'SQK-RAS201', 'SQK-RBK001', 'SQK-RBK004', 'SQK-RBK110-96', 'SQK-RBK111-24',
-                        'SQK-RBK111-96', 'SQK-RBK112-24', 'SQK-RBK112-96', 'SQK-RBK114-24', 'SQK-RBK114-96',
-                        'SQK-RLB001', 'SQK-RLI001', 'SQK-RNA001', 'SQK-RNA002', 'SQK-RPB004', 'SQK-ULK001',
-                        'SQK-ULK114', 'VSK-PTC001', 'VSK-VBK001', 'VSK-VMK001', 'VSK-VMK004', 'VSK-VPS001',
-                        'VSK-VSK001', 'VSK-VSK003', 'VSK-VSK004']
-
-    flowcell_list = ['FLO-FLG001', 'FLO-FLG111', 'FLO-FLG114', 'FLO-MIN106', 'FLO-MIN107', 'FLO-MIN110', 'FLO-MIN111',
-                     'FLO-MIN112', 'FLO-MIN114', 'FLO-MINSP6', 'FLO-PRO001', 'FLO-PRO002', 'FLO-PRO002-ECO',
-                     'FLO-PRO002M', 'FLO-PRO111', 'FLO-PRO112', 'FLO-PRO112M', 'FLO-PRO114', 'FLO-PRO114M']
-
-    configuration_file_list = ['dna_r10.3_450bps_hac', 'dna_r10.3_450bps_hac_prom', 'dna_r10.4.1_e8.2_260bps_hac',
-                               'dna_r10.4.1_e8.2_260bps_hac_prom', 'dna_r10.4.1_e8.2_400bps_hac',
-                               'dna_r10.4.1_e8.2_400bps_hac_prom', 'dna_r10_450bps_hac', 'dna_r10.4_e8.1_hac',
-                               'dna_r10.4_e8.1_hac_prom', 'dna_r9.4.1_450bps_hac', 'dna_r9.4.1_450bps_hac_prom',
-                               'dna_r9.4.1_e8.1_hac', 'dna_r9.4.1_e8.1_hac_prom', 'dna_r9.5_450bps',
-                               'rna_r9.4.1_70bps_hac', 'rna_r9.4.1_70bps_hac_prom']
-
     @staticmethod
     def check_cpus(requested_cpu, n_proc):
         total_cpu = cpu_count()
@@ -102,6 +75,12 @@ class Methods(object):
             print('Running Guppy{}'.format(guppy_version))
 
     @staticmethod
+    def check_from_list(my_category, my_item, my_list):
+        if my_item not in my_list:
+            print('Please use of the following choice for {}: {}'.format(my_category, my_list))
+            sys.exit()
+
+    @staticmethod
     def check_version(log_file):
         # Not being used right now because versions are captured in the requirements.txt file
         with open(log_file, 'w') as f:
@@ -116,6 +95,48 @@ class Methods(object):
             # Filtlong
             p = subprocess.Popen(['filtlong', '--version'])
             stderr, stdout = p.communicate()
+
+    @staticmethod
+    def check_config(config, flowcell, sequencer, library_kit):
+        if config and (flowcell or library_kit):
+            raise Exception('Please chose a configuration file or a "library kit/flowcell/sequencer" combination, '
+                            'not both.')
+        if config:
+            if config not in Kits.configuration_file_list:
+                raise Exception('Please use one of the following supported configuration file: {}'
+                                .format(Kits.configuration_file_list))
+        if not config:
+            if flowcell and library_kit and sequencer:
+                # Check flowcell
+                Methods.check_from_list('flowcell', flowcell, Kits.flowcell_list)
+                # Check library kit
+                Methods.check_from_list('library kit', library_kit, Kits.library_kit_list)
+            else:
+                raise Exception('Please make sure you are selection a library kit, a flowcell and a sequencer if '
+                                'you are not using a configuration file')
+
+    @staticmethod
+    def get_guppy_config(flowcell, library, sequencer, workflows):
+        # Parse workflow.tsv to pandas df
+        df = pd.read_csv(workflows, sep='\t', header=0)
+
+        # Return the config (4th column) matching the requested flowcell, library, accuracy and sequencer
+        guppy_conf_list = df.loc[(df['flowcell'] == flowcell) & (df['kit'] == library), 'config_name'].values
+
+        if sequencer == 'promethion':
+            guppy_conf_list = [x for x in guppy_conf_list if 'prom' in x]  # Assume it will only return one...
+
+        if len(guppy_conf_list) == 1:
+            conf = guppy_conf_list[0]
+        else:
+            raise Exception('More than one config file matching '
+                            '{}, {} and {}'.format(flowcell, library, sequencer))
+
+        if not conf:
+            raise Exception('Could not find a configuration for the requested flowcell, library kit, accuracy and '
+                            'sequencer ({}, {}, {})'.format(flowcell, library, sequencer))
+        else:
+            return conf + '.cfg'
 
     @staticmethod
     def make_folder(folder):
@@ -294,6 +315,13 @@ class Methods(object):
 
         Methods.get_files(basecalled_folder)
 
+    @staticmethod
+    def run_pycoqc(basecalled_folder, report_folder):
+        Methods.make_folder(report_folder)
+        cmd = ['pycoQC',
+               '-f', basecalled_folder + 'sequencing_summary.txt',
+               '-o', report_folder + 'pycoQC_output.html']
+        subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 
     @staticmethod
     def run_porechop(sample, input_fastq, trimmed_folder, cpu):
