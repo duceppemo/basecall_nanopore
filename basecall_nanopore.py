@@ -48,6 +48,13 @@ class Basecaller(object):
         self.run()
 
     def run(self):
+
+        ##################
+        #
+        # Checks
+        #
+        ##################
+
         print('Checking a few things...')
 
         # Check if number of CPU and memory requested are valid
@@ -65,9 +72,7 @@ class Basecaller(object):
         Methods.check_config(self.config, self.flowcell, self.sequencer, self.library_kit)
 
         # Check barcodes
-        # Check barcode kit, if present
-        if self.barcode_kit:
-            Methods.check_from_list('barcoding kit', self.barcode_kit, Kits.barcoding_kit_list)
+        Methods. check_barcode(self.barcode_kit, self.description)
 
         print('\tAll good!')
 
@@ -105,7 +110,7 @@ class Basecaller(object):
             else:
                 guppy_conf = self.config
 
-            # Basecall fast5 to fastq
+            # Basecall fast5 to
             Methods.run_guppy(self.input, basecalled_folder, guppy_conf, self.recursive,
                               self.gpu, self.barcode_kit)
 
@@ -114,7 +119,7 @@ class Basecaller(object):
 
             if self.description:
                 sample_dict = Methods.parse_samples(self.description)
-                Methods.rename_barcode(sample_dict, basecalled_folder)
+                Methods.rename_barcode(sample_dict, basecalled_folder)  # Also remove extra barcode folders
 
             # Remove dump folder
             shutil.rmtree(basecalled_folder + 'guppy_basecaller-core-dump-db', ignore_errors=False, onerror=None)
@@ -197,15 +202,11 @@ if __name__ == "__main__":
     parser.add_argument('-o', '--output', metavar='/path/to/output_folder/',
                         required=True, type=str,
                         help='Folder to hold the result files. Mandatory.')
-    parser.add_argument('-s', '--sequencer', metavar='MinION',
+    parser.add_argument('-s', '--sequencer',
                         required=False, type=str,
                         choices=['minion', 'promethion'],
                         help='Sequencer used. "minion" includes all sequencers except "promethion". '
                              'Optional. Default is "minion".')
-    # parser.add_argument('-a', '--accuracy', metavar='sup',
-    #                     required=False, type=str, default='sup',
-    #                     choices=['fast', 'hac', 'sup'],
-    #                     help='Accuracy of basecalling. Mandatory. Default is "sup".')
     parser.add_argument('-c', '--config', metavar='dna_r9.4.1_450bps_sup.cfg',
                         required=False, type=str,
                         help='Guppy config file. Typically found in "/opt/ont/guppy/data" ending with ".cfg". '

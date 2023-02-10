@@ -116,6 +116,11 @@ class Methods(object):
                                 'you are not using a configuration file')
 
     @staticmethod
+    def check_barcode(barcode_kit, barcode_description):
+        if barcode_kit:
+            Methods.check_from_list('barcoding kit', barcode_kit, Kits.barcoding_kit_list)
+
+    @staticmethod
     def get_guppy_config(flowcell, library, sequencer, workflows):
         # Parse workflow.tsv to pandas df
         df = pd.read_csv(workflows, sep='\t', header=0)
@@ -247,15 +252,14 @@ class Methods(object):
                     os.rename(fastq_current_name, fastq_new_name)  # Rename fastq
                 elif barcode_name == 'unclassified':
                     continue
-                else:  # not supposed to be there
+                else:  # Delete barcodes found but not present en description file. Not supposed to be there
                     shutil.rmtree(barcode_folder, ignore_errors=False, onerror=None)  # Delete non-empty folder
 
     @staticmethod
-    def remove_extra_barcodes(sample_dict, basecalled_folder):
-        pass
-
-    @staticmethod
     def run_guppy(fast5_folder, basecalled_folder, guppy_conf, recursive, device, barcode_kit):
+        Methods.make_folder(basecalled_folder)
+        os.chdir(basecalled_folder)  # avoid "guppy_basecaller-core-dump-db" folder created in script location
+
         cmd = ['guppy_basecaller',
                '--config', guppy_conf,
                '--input_path', fast5_folder,
