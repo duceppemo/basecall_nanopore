@@ -110,7 +110,8 @@ python basecall_nanopore.py \
     -o /analyses/basecalled \
     --recursive \
     -c dna_r9.4.1_450bps_sup.cfg
-    -t 4
+    -t 4 \
+    -g "cuda:0"
 ```
 2- Barcodes, barcode description, R10.3 flowcell, Fast basecalling using config file.
 ```commandline
@@ -121,7 +122,8 @@ python basecall_nanopore.py \
     --config dna_r10.3_450bps_fast.cfg \
     --barcode-kit EXP-NBD104 \
     --description /data/bc.txt \
-    --threads 4
+    --threads 4 \
+    --gpu "cuda:0"
 ```
 3- Barcodes unknown, no barcode description, R9.4.1 flowcell. Using 2 GPUs.
 ```commandline
@@ -134,4 +136,17 @@ python basecall_nanopore.py \
     --barcode-kit unknown \
     --threads 4 \
     --gpu "cuda:0 cuda:1"
+```
+4-  2 Barcode kits, barcode description,  R9.4.1 flowcell, Super Accuracy basecalling using config file.
+```commandline
+python basecall_nanopore.py \
+    -i /data/fast5 \
+    -o /analyses/basecalled \
+    --recursive \
+    -c dna_r9.4.1_450bps_sup.cfg
+    --barcode-kit "EXP-NBD104 EXP-NBD114" \
+    --description /data/bc.txt \
+    -t 4 \
+    --gpu "cuda:0"
+    
 ```

@@ -2,7 +2,7 @@ class Kits(object):
     barcoding_kit_list = ['EXP-NBD104', 'EXP-NBA114', 'SQK-RBK114.96', 'SQK-RBK114.24', 'SQK-NBD114.96',
                           'SQK-NBD114.24', 'SQK-PCB111.24', 'SQK-RPB004', 'SQK-PBK004', 'SQK-RBK110.96',
                           'SQK-RBK004', 'SQK-16S024', 'SQK-RAB204', 'EXP-PBC096', 'EXP-PBC001', 'EXP-NBD114',
-                          'EXP-NBD104', 'EXP-NBD196', 'unknown']
+                          'EXP-NBD196', 'unknown']
 
     library_kit_list = ['SQK-16S024', 'SQK-CS9109', 'SQK-DCS108', 'SQK-DCS109', 'SQK-LRK001', 'SQK-LSK108',
                         'SQK-LSK109', 'SQK-LSK109-XL', 'SQK-LSK110', 'SQK-LSK110-XL', 'SQK-LSK111', 'SQK-LSK111-XL',

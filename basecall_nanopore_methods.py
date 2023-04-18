@@ -117,8 +117,9 @@ class Methods(object):
 
     @staticmethod
     def check_barcode(barcode_kit, barcode_description):
-        if barcode_kit:
-            Methods.check_from_list('barcoding kit', barcode_kit, Kits.barcoding_kit_list)
+        for bc in barcode_kit:
+            if bc:
+                Methods.check_from_list('barcoding kit', bc, Kits.barcoding_kit_list)
 
     @staticmethod
     def get_guppy_config(flowcell, library, sequencer, workflows):
@@ -281,7 +282,11 @@ class Methods(object):
         if barcode_kit:
             cmd += ['--detect_barcodes']
             if barcode_kit != 'unknown':
-                cmd += ['--barcode_kits', barcode_kit]
+                if len(barcode_kit) > 1:
+                    # cmd += ['--barcode_kits', '"' + " ".join(barcode_kit) + '"']
+                    cmd += ['--barcode_kits', " ".join(barcode_kit)]
+                else:
+                    cmd += ['--barcode_kits', barcode_kit[0]]
 
         subprocess.run(cmd)
 

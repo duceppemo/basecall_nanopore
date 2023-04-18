@@ -32,7 +32,7 @@ class Basecaller(object):
         # Guppy related
         self.gpu = args.gpu
         self.description = args.description
-        self.barcode_kit = args.barcode_kit
+        self.barcode_kit = args.barcode_kit[0].split()
         self.sequencer = args.sequencer
         self.config = args.config
         self.flowcell = args.flowcell
@@ -72,7 +72,7 @@ class Basecaller(object):
         Methods.check_config(self.config, self.flowcell, self.sequencer, self.library_kit)
 
         # Check barcodes
-        Methods. check_barcode(self.barcode_kit, self.description)
+        Methods.check_barcode(self.barcode_kit, self.description)
 
         print('\tAll good!')
 
@@ -188,6 +188,7 @@ class Basecaller(object):
         #
         ##################
 
+        # Remove 'guppy_basecaller-core-dump-db' ?
         print('DONE!')
 
 
@@ -219,9 +220,10 @@ if __name__ == "__main__":
                         required=False, type=str,
                         help='Library kit used. Optional.')
     parser.add_argument('-b', '--barcode-kit', metavar='EXP-NBD104',
-                        required=False, type=str,
-                        help='Barcoding kit used. Use "unknown" if you know barcodes were used, but do not know '
-                             'which kit. Not using this option will not perform barcode splitting. Optional')
+                        required=False, type=str, nargs='+',
+                        help='Barcoding kit(s) used. Use "unknown" if you know barcodes were used, but do not know '
+                             'which kit. Not using this option will not perform barcode splitting. For multiple '
+                             'barcoding kits, use double quotes and space like this: "EXP-NBD104 EXP-NBA114". Optional')
     parser.add_argument('-d', '--description', metavar='/path/to/barcode_description.tsv',
                         required=False, type=str,
                         help='Tab-separated file with two columns with barcode assignments. '
