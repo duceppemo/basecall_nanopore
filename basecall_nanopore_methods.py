@@ -281,9 +281,8 @@ class Methods(object):
             cmd += ['--recursive']
         if barcode_kit:
             cmd += ['--detect_barcodes']
-            if barcode_kit != 'unknown':
+            if barcode_kit[0] != 'unknown':
                 if len(barcode_kit) > 1:
-                    # cmd += ['--barcode_kits', '"' + " ".join(barcode_kit) + '"']
                     cmd += ['--barcode_kits', " ".join(barcode_kit)]
                 else:
                     cmd += ['--barcode_kits', barcode_kit[0]]
