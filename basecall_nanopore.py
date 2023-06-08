@@ -122,7 +122,9 @@ class Basecaller(object):
                 Methods.rename_barcode(sample_dict, basecalled_folder)  # Also remove extra barcode folders
 
             # Remove dump folder
-            shutil.rmtree(basecalled_folder + 'guppy_basecaller-core-dump-db', ignore_errors=False, onerror=None)
+            dump_file = basecalled_folder + 'guppy_basecaller-core-dump-db'
+            if os.path.exists(dump_file):
+                shutil.rmtree(basecalled_folder + 'guppy_basecaller-core-dump-db', ignore_errors=False, onerror=None)
 
             # Create "done" file for resuming purposes
             Methods.flag_done(done_basecalling)
