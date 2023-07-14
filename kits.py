@@ -1,9 +1,12 @@
 class Kits(object):
-    barcoding_kit_list = ['EXP-NBD104', 'EXP-NBA114', 'SQK-RBK114.96', 'SQK-RBK114.24', 'SQK-NBD114.96',
-                          'SQK-NBD114.24', 'SQK-PCB111.24', 'SQK-RPB004', 'SQK-PBK004', 'SQK-RBK110.96',
-                          'SQK-RBK004', 'SQK-16S024', 'SQK-RAB204', 'EXP-PBC096', 'EXP-PBC001', 'EXP-NBD114',
-                          'EXP-NBD196', 'unknown']
-
+    barcoding_kit_list = ['EXP-NBD103', 'EXP-NBD104', 'EXP-NBD114', 'EXP-NBD196', 'EXP-PBC001', 'EXP-PBC096',
+                          'SQK-16S024', 'SQK-LWB001', 'SQK-MLK111-96-XL', 'SQK-NBD111-24', 'SQK-NBD111-96',
+                          'SQK-NBD112-24', 'SQK-NBD112-96', 'SQK-NBD114-24', 'SQK-NBD114-96', 'SQK-PBK004',
+                          'SQK-PCB109', 'SQK-PCB110', 'SQK-PCB111-24', 'SQK-RAB201', 'SQK-RAB204', 'SQK-RBK001',
+                          'SQK-RBK004', 'SQK-RBK110-96', 'SQK-RBK111-24', 'SQK-RBK111-96', 'SQK-RBK112-24',
+                          'SQK-RBK112-96', 'SQK-RBK114-24', 'SQK-RBK114-96', 'SQK-RLB001', 'SQK-RPB004',
+                          'SQK-RPB114-24', 'VSK-PTC001', 'VSK-VMK001', 'VSK-VMK004', 'VSK-VPS001', 'unknown']
+                          
     library_kit_list = ['SQK-16S024', 'SQK-CS9109', 'SQK-DCS108', 'SQK-DCS109', 'SQK-LRK001', 'SQK-LSK108',
                         'SQK-LSK109', 'SQK-LSK109-XL', 'SQK-LSK110', 'SQK-LSK110-XL', 'SQK-LSK111', 'SQK-LSK111-XL',
                         'SQK-LSK112', 'SQK-LSK112-XL', 'SQK-LSK114', 'SQK-LSK114-XL', 'SQK-LSK308', 'SQK-LSK309',
